@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fun Lab — Riddles · Jokes · Guessing Game</title>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#fbfdfc;
+      --card:#ffffff;
+      --muted:#486258;
+      --accent:#0b6b47;
+      --accent-2:#0f9b45;
+      --glass: rgba(255,255,255,0.6);
+      --success:#1f7a2e;
+      --danger:#b02a37;
+      --radius:12px;
+      --shadow: 0 10px 25px rgba(16,36,24,0.08);
+    }
+    [data-theme="dark"]{
+      --bg:#0b1a17;
+      --card:#07120f;
+      --muted:#9fb9a8;
+      --accent:#55d08a;
+      --accent-2:#1ec46a;
+      --glass: rgba(10,18,16,0.5);
+      --success:#6fe5a0;
+      --danger:#ff9aa2;
+      --shadow: 0 10px 25px rgba(0,0,0,0.6);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:var(--muted);background:linear-gradient(180deg,var(--bg) 0%, #eaf6ef 60%);-webkit-font-smoothing:antialiased}
+    .wrap{max-width:980px;margin:28px auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{
+      width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:grid;place-items:center;color:white;font-weight:700;font-size:20px;box-shadow:var(--shadow)
+    }
+    h1{margin:0;font-size:1.25rem;color:var(--accent)}
+    .subtitle{font-size:0.9rem;color:var(--muted);margin-top:4px}
+    .controls{display:flex;gap:8px;align-items:center}
+    button {background:var(--card);border:1px solid rgba(0,0,0,0.06);padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600;color:var(--muted)}
+    button.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;border:none;box-shadow:0 6px 16px rgba(11,107,47,0.12)}
+    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+    .grid{display:grid;grid-template-columns: 1fr 360px;gap:18px}
+    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+
+    /* card */
+    .card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);overflow:hidden}
+    .card h2{margin:0 0 8px 0;color:var(--accent)}
+    .muted{color:var(--muted);font-size:0.95rem}
+
+    /* Riddle / Joke UI */
+    .big-text{font-size:1.05rem;font-weight:600;margin:8px 0}
+    .small{font-size:0.9rem;color:var(--muted)}
+    .actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+
+    input[type="text"], input[type="number"]{
+      width:100%;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);font-size:0.95rem;background:transparent;color:inherit;
+    }
+
+    .history{max-height:220px;overflow:auto;padding:8px;background:linear-gradient(180deg,var(--glass),transparent);border-radius:8px;margin-top:12px}
+    .chip{display:inline-block;padding:6px 8px;background:rgba(0,0,0,0.04);border-radius:999px;margin:6px 6px 0 0;font-size:0.85rem}
+
+    /* Guessing game */
+    .guess-list{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+    .guess-item{padding:8px 10px;border-radius:8px;background:rgba(0,0,0,0.04)}
+    .status{margin-top:10px;font-weight:700}
+
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:0.85rem}
+
+    /* micro animations */
+    .pulse{animation:pulse 2.2s infinite ease-in-out}
+    @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+
+    /* leaderboard */
+    .leaderboard{display:grid;gap:8px}
+    .lb-row{display:flex;justify-content:space-between;padding:8px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,0.03),transparent)}
+    a.link{color:var(--accent);text-decoration:none;font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="wrap" id="app">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">FL</div>
+        <div>
+          <h1>Fun Lab</h1>
+          <div class="subtitle">Riddles • Jokes • Number Guess — single-file app</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="themeBtn" aria-pressed="false" title="Toggle theme">Dark</button>
+        <button class="primary" id="resetBtn" title="Reset scores">Reset Scores</button>
+      </div>
+    </header>
+
+    <main class="grid" role="main">
+      <!-- left column: games -->
+      <section class="card" aria-labelledby="gamesHeading">
+        <h2 id="gamesHeading">Choose a toy</h2>
+        <p class="muted">Pick a panel below. Each tool stores local scores & history so you can demo it later.</p>
+
+        <!-- Tabs -->
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button id="tabRiddle" class="tabBtn">Riddle</button>
+          <button id="tabJoke" class="tabBtn">Joke</button>
+          <button id="tabGuess" class="tabBtn">Guess</button>
+        </div>
+
+        <div id="panels" style="margin-top:14px">
+
+          <!-- RIDDLE PANEL -->
+          <div id="panelRiddle" class="panel" hidden>
+            <h3>Riddle Generator</h3>
+            <p class="small">Try to solve the riddle. Use the <strong>Hint</strong> if you're stuck. Earn points for correct answers.</p>
+
+            <div class="big-text" id="riddleText" aria-live="polite">Press "New Riddle" to get started.</div>
+
+            <div style="margin-top:10px">
+              <label for="riddleAnswer" class="small">Your answer</label>
+              <input id="riddleAnswer" type="text" placeholder="Type answer and press Enter" autocomplete="off" />
+            </div>
+
+            <div class="actions">
+              <button id="newRiddle" class="primary">New Riddle</button>
+              <button id="hintRiddle">Hint</button>
+              <button id="revealRiddle">Reveal</button>
+              <div style="flex:1"></div>
+              <div class="chip">Score: <span id="riddleScore">0</span></div>
+            </div>
+
+            <div class="history" id="riddleHistory" aria-live="polite" aria-label="Riddle history">
+              <!-- history items -->
+            </div>
+          </div>
+
+          <!-- JOKE PANEL -->
+          <div id="panelJoke" class="panel" hidden>
+            <h3>Joke Generator</h3>
+            <p class="small">Get a family-friendly joke, copy it, or share it to the clipboard.</p>
+
+            <div class="big-text" id="jokeText">Press "New Joke" to begin.</div>
+
+            <div class="actions">
+              <button id="newJoke" class="primary">New Joke</button>
+              <button id="copyJoke">Copy</button>
+              <button id="tweetJoke">Tweet</button>
+              <div style="flex:1"></div>
+              <div class="chip">Jokes seen: <span id="jokeCount">0</span></div>
+            </div>
+
+            <div class="history" id="jokeHistory" aria-live="polite" aria-label="Joke history"></div>
+          </div>
+
+          <!-- GUESS PANEL -->
+          <div id="panelGuess" class="panel" hidden>
+            <h3>Number Guessing</h3>
+            <p class="small">Guess a number between 1 and 100. Fewer tries = better score. Press Enter to submit.</p>
+
+            <div style="display:flex;gap:8px;align-items:center">
+              <input id="guessInput" type="number" min="1" max="100" placeholder="Your guess (1–100)" />
+              <button id="submitGuess">Guess</button>
+              <button id="newGame">New Game</button>
+            </div>
+
+            <div class="status" id="guessStatus" aria-live="polite">Ready.</div>
+
+            <div class="guess-list" id="guessList" aria-label="Guesses"></div>
+
+            <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+              <div class="chip">Tries: <span id="tries">0</span></div>
+              <div class="chip">Best: <span id="best">—</span></div>
+              <div style="flex:1"></div>
+              <button id="giveUp">Give Up</button>
+            </div>
+          </div>
+
+        </div> <!-- /panels -->
+      </section>
+
+      <!-- right column: scoreboard & info -->
+      <aside class="card" aria-labelledby="infoHeading">
+        <h2 id="infoHeading">Scoreboard & Info</h2>
+        <p class="muted">Your progress is stored locally. Use Reset Scores to clear everything.</p>
+
+        <div style="margin-top:12px">
+          <h3 style="margin:0 0 8px 0">Leaderboard (local)</h3>
+          <div class="leaderboard" id="leaderboard">
+            <div class="lb-row"><span>Riddle</span><strong id="lbRiddle">0</strong></div>
+            <div class="lb-row"><span>Jokes Seen</span><strong id="lbJoke">0</strong></div>
+            <div class="lb-row"><span>Guessing Best</span><strong id="lbGuess">—</strong></div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px">
+          <h3 style="margin:0 0 8px 0">Quick Links</h3>
+          <a class="link" href="#panelRiddle" id="lnkR" role="link">Open Riddle</a><br/>
+          <a class="link" href="#panelJoke" id="lnkJ">Open Joke</a><br/>
+          <a class="link" href="#panelGuess" id="lnkG">Open Guess</a>
+        </div>
+
+        <div style="margin-top:14px">
+          <h3 style="margin:0 0 8px 0">About</h3>
+          <p class="small">This single-file app demonstrates interactivity, state, and local persistence. Feel free to fork & improve.</p>
+        </div>
+      </aside>
+
+    </main>
+
+    <footer>
+      <small>Tip: use <kbd>Enter</kbd> to submit answers. Scores are saved locally in your browser.</small>
+    </footer>
+  </div>
+
+  <script>
+    // ---------- DATA ----------
+    const RIDDLES = [
+      {q:"I have keys but no locks. I have space but no room. You can enter but can't go outside. What am I?", a:"keyboard", hint:"You're likely using me right now."},
+      {q:"What can travel around the world while staying in a corner?", a:"stamp", hint:"It often gets licked."},
+      {q:"I speak without a mouth and hear without ears. I have nobody, but I come alive with wind. What am I?", a:"echo", hint:"You hear me in caves."},
+      {q:"The more of this there is, the less you see. What is it?", a:"darkness", hint:"It comes at night."}
+    ];
+    const JOKES = [
+      "Why don't scientists trust atoms? Because they make up everything!",
+      "Why did the bicycle fall over? Because it was two-tired.",
+      "I told my running shoes a joke... they laughed so hard they heel-ed.",
+      "Parallel lines have so much in common. It’s a shame they’ll never meet."
+    ];
+
+    // ---------- UTIL ----------
+    function el(id){return document.getElementById(id)}
+    function setTheme(t){
+      document.documentElement.setAttribute('data-theme', t)
+      localStorage.setItem('funlab_theme', t)
+      el('themeBtn').textContent = t==='dark' ? 'Light' : 'Dark'
+      el('themeBtn').setAttribute('aria-pressed', t==='dark')
+    }
+    // load theme
+    setTheme(localStorage.getItem('funlab_theme')||'light')
+
+    // ---------- STATE (localStorage-backed) ----------
+    const STATE = {
+      riddleScore: Number(localStorage.getItem('riddleScore') || 0),
+      jokeCount: Number(localStorage.getItem('jokeCount') || 0),
+      guessBest: (localStorage.getItem('guessBest') === null) ? null : Number(localStorage.getItem('guessBest'))
+    };
+    // update leaderboard UI
+    function updateLB(){
+      el('riddleScore').textContent = STATE.riddleScore
+      el('jokeCount').textContent = STATE.jokeCount
+      el('lbRiddle').textContent = STATE.riddleScore
+      el('lbJoke').textContent = STATE.jokeCount
+      el('lbGuess').textContent = STATE.guessBest === null ? '—' : STATE.guessBest
+      el('best').textContent = STATE.guessBest === null ? '—' : STATE.guessBest
+      localStorage.setItem('riddleScore', STATE.riddleScore)
+      localStorage.setItem('jokeCount', STATE.jokeCount)
+      if (STATE.guessBest !== null) localStorage.setItem('guessBest', STATE.guessBest)
+    }
+    updateLB()
+
+    // ---------- TABS ----------
+    const tabs = {Riddle: 'panelRiddle', Joke: 'panelJoke', Guess: 'panelGuess'}
+    function showPanel(name){
+      Object.values(tabs).forEach(id=> el(id).hidden = true)
+      el(tabs[name]).hidden = false
+      // focus first input for convenience
+      setTimeout(()=> {
+        if (name==='Riddle') el('riddleAnswer').focus()
+        if (name==='Joke') el('newJoke').focus()
+        if (name==='Guess') el('guessInput').focus()
+      }, 120)
+    }
+    el('tabRiddle').onclick = ()=> showPanel('Riddle')
+    el('tabJoke').onclick = ()=> showPanel('Joke')
+    el('tabGuess').onclick = ()=> showPanel('Guess')
+    // default
+    showPanel('Riddle')
+
+    // ---------- RIDDLE LOGIC ----------
+    let currentRiddle = null
+    function newRiddle(){
+      const idx = Math.floor(Math.random()*RIDDLES.length)
+      currentRiddle = RIDDLES[idx]
+      el('riddleText').textContent = currentRiddle.q
+      el('riddleAnswer').value = ''
+      el('riddleHistory').prepend(renderHistoryLine('New riddle shown', 'info'))
+    }
+    function renderHistoryLine(text, type='note'){
+      const d = document.createElement('div')
+      d.textContent = `[${new Date().toLocaleTimeString()}] ${text}`
+      d.style.padding = '6px'
+      if (type==='ok') d.style.background = 'linear-gradient(90deg, rgba(11,107,47,0.08), transparent)'
+      if (type==='bad') d.style.background = 'linear-gradient(90deg, rgba(176,42,55,0.06), transparent)'
+      d.style.borderRadius = '8px'
+      d.style.marginBottom = '6px'
+      return d
+    }
+    el('newRiddle').onclick = newRiddle
+    el('hintRiddle').onclick = ()=>{
+      if (!currentRiddle) return
+      el('riddleHistory').prepend(renderHistoryLine('HINT: '+currentRiddle.hint, 'note'))
+    }
+    el('revealRiddle').onclick = ()=>{
+      if (!currentRiddle) return
+      el('riddleHistory').prepend(renderHistoryLine('REVEAL: '+currentRiddle.a, 'info'))
+    }
+    el('riddleAnswer').addEventListener('keydown', (e)=>{
+      if (e.key === 'Enter') checkRiddleAnswer()
+    })
+    function checkRiddleAnswer(){
+      if (!currentRiddle) return
+      const given = el('riddleAnswer').value.trim().toLowerCase()
+      if (!given) return
+      // simple compare: allow single word answers
+      if (given.includes(currentRiddle.a.toLowerCase()) || currentRiddle.a.toLowerCase().includes(given)){
+        STATE.riddleScore += 10
+        updateLB()
+        el('riddleHistory').prepend(renderHistoryLine('Correct! +' + 10 + 'pts — answer: ' + currentRiddle.a, 'ok'))
+        // celebrate
+        el('riddleText').classList.add('pulse')
+        setTimeout(()=> el('riddleText').classList.remove('pulse'), 900)
+        currentRiddle = null
+      } else {
+        el('riddleHistory').prepend(renderHistoryLine('Wrong: "'+given+'" — try again or use hint.', 'bad'))
+      }
+      el('riddleAnswer').value = ''
+    }
+
+    // ---------- JOKE LOGIC ----------
+    let jokeIndex = -1
+    function newJoke(){
+      jokeIndex = (Math.floor(Math.random()*JOKES.length))
+      const j = JOKES[jokeIndex]
+      el('jokeText').textContent = j
+      STATE.jokeCount += 1
+      updateLB()
+      el('jokeHistory').prepend(renderHistoryLine('Joke: '+j, 'info'))
+    }
+    el('newJoke').onclick = newJoke
+    el('copyJoke').onclick = async ()=>{
+      const t = el('jokeText').textContent
+      try{
+        await navigator.clipboard.writeText(t)
+        el('jokeHistory').prepend(renderHistoryLine('Copied joke to clipboard', 'info'))
+      }catch(e){
+        el('jokeHistory').prepend(renderHistoryLine('Copy failed — permission denied', 'bad'))
+      }
+    }
+    el('tweetJoke').onclick = ()=>{
+      const text = encodeURIComponent(el('jokeText').textContent + " #joke")
+      window.open('https://twitter.com/intent/tweet?text=' + text, '_blank', 'noopener')
+    }
+
+    // ---------- GUESSING GAME ----------
+    let secret = null, tries = 0
+    function newGame(){
+      secret = Math.floor(Math.random()*100)+1
+      tries = 0
+      el('guessList').innerHTML = ''
+      el('guessStatus').textContent = 'New game started — good luck!'
+      el('tries').textContent = tries
+      el('guessInput').value = ''
+      el('guessInput').focus()
+    }
+    function submitGuess(){
+      const val = Number(el('guessInput').value)
+      if (!val || val < 1 || val > 100){ el('guessStatus').textContent = 'Please enter a number 1–100'; return }
+      tries += 1
+      const node = document.createElement('div'); node.className='guess-item'; node.textContent = val
+      el('guessList').appendChild(node)
+      el('tries').textContent = tries
+      if (val === secret){
+        el('guessStatus').textContent = `Correct! You got it in ${tries} tries.`
+        // update best
+        if (STATE.guessBest === null || tries < STATE.guessBest) {
+          STATE.guessBest = tries
+          updateLB()
+          el('guessStatus').textContent += ' New personal best!'
+        } else {
+          updateLB()
+        }
+        // small celebration
+        node.style.background = 'linear-gradient(90deg, rgba(11,107,47,0.12), transparent)'
+      } else if (val < secret){
+        el('guessStatus').textContent = 'Too low — try higher'
+      } else {
+        el('guessStatus').textContent = 'Too high — try lower'
+      }
+      el('guessInput').value = ''
+      el('guessInput').focus()
+    }
+    el('submitGuess').onclick = submitGuess
+    el('newGame').onclick = newGame
+    el('giveUp').onclick = ()=>{
+      if (secret === null) { el('guessStatus').textContent = 'No game running — Press New Game' ; return }
+      el('guessStatus').textContent = `The number was ${secret}. Start a new game to try again.`
+      secret = null
+    }
+    // support Enter key inside guess input
+    el('guessInput').addEventListener('keydown', (e)=> { if (e.key === 'Enter') submitGuess() })
+
+    // ---------- RESET & THEME ----------
+    el('resetBtn').onclick = ()=>{
+      if (!confirm('Reset all stored scores and history?')) return
+      localStorage.removeItem('riddleScore')
+      localStorage.removeItem('jokeCount')
+      localStorage.removeItem('guessBest')
+      STATE.riddleScore = 0; STATE.jokeCount = 0; STATE.guessBest = null
+      el('riddleHistory').innerHTML = ''
+      el('jokeHistory').innerHTML = ''
+      el('guessList').innerHTML = ''
+      updateLB()
+      newGame()
+      el('riddleText').textContent = 'Press "New Riddle" to get started.'
+      el('jokeText').textContent = 'Press "New Joke" to begin.'
+    }
+
+    el('themeBtn').onclick = ()=>{
+      const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'
+      setTheme(cur === 'dark' ? 'light' : 'dark')
+    }
+
+    // ---------- INITIALIZE ----------
+    (function init(){
+      // restore basic text
+      el('riddleText').textContent = 'Press "New Riddle" to get started.'
+      el('jokeText').textContent = 'Press "New Joke" to begin.'
+      newGame()
+      // link shortcuts
+      el('lnkR').onclick = (e)=>{ e.preventDefault(); showPanel('Riddle'); }
+      el('lnkJ').onclick = (e)=>{ e.preventDefault(); showPanel('Joke'); }
+      el('lnkG').onclick = (e)=>{ e.preventDefault(); showPanel('Guess'); }
+      // small keyboard shortcuts: 1=riddle,2=joke,3=guess
+      window.addEventListener('keydown', (e)=>{
+        if (e.key==='1') showPanel('Riddle')
+        if (e.key==='2') showPanel('Joke')
+        if (e.key==='3') showPanel('Guess')
+      })
+    })();
+  </script>
+</body>
+</html>

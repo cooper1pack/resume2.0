@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>How to Be a Faster Runner — Guide & Resume</title>
+
+  <!-- Link to the stylesheet you created from scratch -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Use a crisp system font stack for professionalism -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header (div 1) -->
+  <header class="site-header">
+    <nav class="nav">
+      <a class="logo" href="#">RunFaster</a>
+      <ul class="nav-list">
+        <li><a href="#training">Training</a></li>
+        <li><a href="#technique">Technique</a></li>
+        <li><a href="#data">Data & Chart</a></li>
+        <li><a href="#resume">Resume</a></li>
+      </ul>
+    </nav>
+
+    <div class="hero">
+      <h1>How to Be a Faster Runner</h1>
+      <p class="tagline">Practical tips, workouts, and data-driven ideas that make you quicker — safely and sustainably.</p>
+      <a class="cta" href="#training">Start the plan ↓</a>
+    </div>
+  </header>
+
+  <!-- Main content (div 2) -->
+  <main class="site-main">
+    <!-- Quick inline SVG image (counts as an image not part of a theme) -->
+    <figure class="hero-art">
+      <!-- simple runner SVG -->
+      <svg width="320" height="120" viewBox="0 0 320 120" role="img" aria-labelledby="svgTitle">
+        <title id="svgTitle">Runner icon</title>
+        <g fill="none" stroke="#0b6b2f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="52" cy="20" r="10" fill="#0b6b2f"/>
+          <path d="M62 28c20 8 36 18 42 26 6 8 0 18-8 22-8 4-20 6-30 4" />
+          <path d="M60 52c10 8 22 10 36 6 6-2 10-6 14-12" />
+          <path d="M40 56c-8 10-16 20-18 30" />
+        </g>
+      </svg>
+      <figcaption>Illustration: efficient motion and forward drive.</figcaption>
+    </figure>
+
+    <!-- Training section with ordered list that contains an unordered list -->
+    <section id="training" class="panel">
+      <h2>Proven 8-Week Speed Plan (overview)</h2>
+      <p>Follow a cyclical plan that mixes aerobic base, speed work, strength, and recovery.</p>
+
+      <ol>
+        <li>
+          Build an aerobic base (Weeks 1–2)
+          <ul>
+            <li>Run easy 4–5x/week — keep most runs conversational</li>
+            <li>Include one longer run (gradually increase time)</li>
+            <li>2x strength sessions (light, focused on single-leg strength)</li>
+          </ul>
+        </li>
+
+        <li>
+          Add tempo & threshold work (Weeks 3–4)
+          <ul>
+            <li>1 tempo run (20–30 min at 'comfortably hard')</li>
+            <li>1 easy long run + recovery days</li>
+          </ul>
+        </li>
+
+        <li>
+          Speed & intervals (Weeks 5–6)
+          <ul>
+            <li>Track intervals (e.g., 6×400m or 4×800m) — hard but controlled</li>
+            <li>Include strides (6×20–30s) after easy runs</li>
+          </ul>
+        </li>
+
+        <li>
+          Sharpen + taper (Weeks 7–8)
+          <ul>
+            <li>Reduce total volume; maintain intensity</li>
+            <li>Race simulation or time trial</li>
+          </ul>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Technique section: unordered list inside an ordered list (the other way) -->
+    <section id="technique" class="panel">
+      <h2>Key Technique & Drills</h2>
+      <p>Practice these drills to improve form and efficiency:</p>
+
+      <ul>
+        <li>
+          Stride mechanics (focus on quick turnover)
+          <ol>
+            <li>Drill 1: High knees — 3×30m</li>
+            <li>Drill 2: Butt kicks — 3×30m</li>
+            <li>Drill 3: A/B/C running drills — 2× each</li>
+          </ol>
+        </li>
+
+        <li>Arm drive: keep elbows ~90°, hands relaxed</li>
+        <li>Cadence: aim for ~170–190 steps/min (individual variation applies)</li>
+      </ul>
+
+      <p class="note">Want scientific background? See: <a href="https://en.wikipedia.org/wiki/Interval_training" target="_blank" rel="noopener">Interval training</a> and <a href="https://en.wikipedia.org/wiki/Running_(athletics)" target="_blank" rel="noopener">Running (athletics)</a>.</p>
+    </section>
+
+    <!-- Embedded YouTube video -->
+    <section class="panel">
+      <h2>Coach Demo — Speed Workouts</h2>
+      <p>Short, practical drills and a sample interval session (embedded YouTube).</p>
+
+      <!-- Embedded video (replace the video id if you prefer another video) -->
+      <div class="video-wrap">
+        <iframe width="560" height="315"
+                src="https://www.youtube.com/embed/EgjY7slGCWI"
+                title="How To Run Faster - 3 Types of Speed Work"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+        </iframe>
+      </div>
+      <p class="small">Video source: The Run Experience — practical run coaching. (You can swap this id with any other valid YouTube video.)</p>
+    </section>
+
+    <!-- Embedded Tableau (live tableau public viz) -->
+    <section id="data" class="panel">
+      <h2>Interactive Fitness & Pace Dashboard</h2>
+      <p>Explore a live fitness dashboard embedded from Tableau Public. Interact with the viz to see trends and sample pacing charts.</p>
+
+      <!-- Live Tableau embed (public viz). This uses a Tableau Public view embed URL. -->
+      <div class="tableau-wrap" aria-hidden="false">
+        <iframe
+          src="https://public.tableau.com/views/HealthFitnessActivity/HealthDashboard?:embed=true&:display_count=yes"
+          width="100%"
+          height="600"
+          frameborder="0">
+        </iframe>
+      </div>
+      <p class="small">Tableau visualization provided by Tableau Public. You can publish your own viz and replace the URL above. :contentReference[oaicite:2]{index=2}</p>
+    </section>
+
+    <!-- Anchor target and resume section -->
+    <section id="resume" class="panel resume-panel">
+      <h2>Resume — Runner Profile (HTML résumé)</h2>
+      <p>A concise HTML résumé you can reuse on professional pages.</p>
+
+      <div class="resume-grid">
+        <div class="resume-left">
+          <h3>Contact</h3>
+          <p>(Optional) Email: yourname@example.com</p>
+
+          <h3>Education</h3>
+          <p><strong>B.S. Exercise Science</strong>, Example University — 2023</p>
+
+          <h3>Certifications</h3>
+          <ul>
+            <li>RRCA Running Coach (in progress)</li>
+            <li>CPR & First Aid</li>
+          </ul>
+        </div>
+
+        <div class="resume-right">
+          <h3>Experience</h3>
+          <div class="job">
+            <strong>Assistant Running Coach</strong> — Town Track Club (2023–Present)
+            <p>Design training plans, lead interval sessions, monitor athlete progress.</p>
+          </div>
+
+          <div class="job">
+            <strong>Fitness Data Intern</strong> — Active Insights (2022–2023)
+            <p>Worked with GPS pace datasets and produced weekly performance reports.</p>
+          </div>
+
+          <h3>Skills</h3>
+          <ul>
+            <li>Training plan design (endurance & speed)</li>
+            <li>Basic sports data analysis (Excel / Tableau)</li>
+            <li>Strength & conditioning fundamentals</li>
+          </ul>
+
+          <h3>Awards</h3>
+          <p>Top-10 team finisher — City Half Marathon, 2022</p>
+        </div>
+      </div>
+
+      <!-- Simple "Download résumé" button (links to professional page placeholder) -->
+      <p class="small"><a href="professional.html">Back to professional pages</a></p>
+    </section>
+  </main>
+
+  <!-- Footer (div 3) -->
+  <footer class="site-footer">
+    <p>Made for class — host this page on GitHub Pages. Sources: Runner technique & training literature, YouTube coaching demos, Tableau Public. :contentReference[oaicite:3]{index=3}</p>
+  </footer>
+</body>
+</html>
+
